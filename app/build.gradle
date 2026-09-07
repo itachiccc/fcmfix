@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.kooritea.fcmfix_oplus"
+    namespace = "com.kooritea.fcmfix"
     compileSdkVersion 36
 
     defaultConfig {
-        applicationId "com.kooritea.fcmfix_oplus"
+        applicationId "com.kooritea.fcmfix"
         minSdkVersion 29
         targetSdkVersion 34
         versionCode 53
-        versionName "oplus"
+        versionName "oplus_"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
