@@ -7,6 +7,8 @@ import com.kooritea.fcmfix.libxposed.XposedHelpers;
 import com.kooritea.fcmfix.xposed.AutoStartFix;
 import com.kooritea.fcmfix.xposed.BroadcastFix;
 import com.kooritea.fcmfix.xposed.GmsDeliveryFix;
+import com.kooritea.fcmfix.xposed.OplusBatteryFix;
+import com.kooritea.fcmfix.xposed.OplusDeviceIdleFix;
 import com.kooritea.fcmfix.xposed.KeepNotification;
 import com.kooritea.fcmfix.xposed.MiuiLocalNotificationFix;
 import com.kooritea.fcmfix.xposed.OplusProxyFix;
@@ -29,6 +31,7 @@ public class XposedMain extends io.github.libxposed.api.XposedModule {
         safeInit(() -> new AutoStartFix(classLoader), "AutoStartFix");
         safeInit(() -> new KeepNotification(classLoader), "KeepNotification");
         safeInit(() -> new OplusProxyFix(classLoader), "OplusProxyFix");
+        safeInit(() -> new OplusDeviceIdleFix(classLoader), "OplusDeviceIdleFix");
         // system_server 中 attachBaseContext 的 hook 安装过晚，主动获取系统上下文
         initSystemServerContext(classLoader);
     }
@@ -46,6 +49,12 @@ public class XposedMain extends io.github.libxposed.api.XposedModule {
         if ("com.miui.powerkeeper".equals(param.getPackageName()) && param.isFirstPackage()) {
             XposedModule.setSelfPackageName("com.miui.powerkeeper");
             safeInit(() -> new PowerkeeperFix(param.getClassLoader()), "PowerkeeperFix");
+        }
+
+        if ("com.oplus.battery".equals(param.getPackageName()) && param.isFirstPackage()) {
+            XposedModule.setSelfPackageName("com.oplus.battery");
+            XposedBridge.log("[fcmfix] start hook com.oplus.battery");
+            new OplusBatteryFix(param.getClassLoader());
         }
     }
 
