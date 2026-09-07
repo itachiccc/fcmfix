@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches:
-      - fix/stopped-app-wakeup # 当推送代码到此分支时触发
+      - master # 当推送代码到此分支时触发
   workflow_dispatch: # 允许在 GitHub 网页手动点击触发
 
 jobs:
