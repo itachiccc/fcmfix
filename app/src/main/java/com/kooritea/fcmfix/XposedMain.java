@@ -54,7 +54,7 @@ public class XposedMain extends io.github.libxposed.api.XposedModule {
         if ("com.oplus.battery".equals(param.getPackageName()) && param.isFirstPackage()) {
             XposedModule.setSelfPackageName("com.oplus.battery");
             XposedBridge.log("[fcmfix] start hook com.oplus.battery");
-            new OplusBatteryFix(param.getClassLoader());
+            safeInit(() -> new OplusBatteryFix(param.getClassLoader()), "OplusBatteryFix");
         }
     }
 
@@ -70,7 +70,7 @@ public class XposedMain extends io.github.libxposed.api.XposedModule {
             XposedBridge.log("[fcmfix] start hook " + name);
             task.run();
         } catch (Throwable e) {
-            XposedBridge.log("[fcmfix] " + name + " 初始化失败: " + e.getMessage());
+            XposedBridge.log("[fcmfix] " + name + " 初始化失败: " + e.toString());
         }
     }
 
@@ -78,6 +78,10 @@ public class XposedMain extends io.github.libxposed.api.XposedModule {
         try {
             Class<?> activityThreadClass = XposedHelpers.findClass("android.app.ActivityThread", classLoader);
             Object activityThread = XposedHelpers.callStaticMethod(activityThreadClass, "currentActivityThread");
+            if (activityThread == null) {
+                XposedBridge.log("[fcmfix] 系统上下文获取失败: currentActivityThread 为 null");
+                return;
+            }
             Object systemContext = XposedHelpers.callMethod(activityThread, "getSystemContext");
             if (systemContext instanceof Context) {
                 XposedModule.initSystemServerContext((Context) systemContext);
